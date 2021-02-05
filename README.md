@@ -15,6 +15,6 @@ npm install --save dyca
 const dyca = require('dyca')
 
 const store = dyca(new Map())
-store.set('a', 1)
-expect(store.get('a')).toBe(1)
+store.set('foo/bar/baz', 1)
+store.get('foo/bar/baz') // [1]
 ```
