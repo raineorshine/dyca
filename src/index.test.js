@@ -13,12 +13,18 @@ test('ad hoc collection (1 level)', () => {
   expect(store.get('a')).toEqual([1])
 })
 
-// test('get nested property via path', () => {
-//   const store = dyca(new Map())
-//   store.set('foo', {
-//     bar: {
-//       baz: 1
-//     }
-//   })
-//   expect(store.get('foo/bar/baz')).toBe(1)
-// })
+test('ad hoc collection (recursive)', () => {
+  const store = dyca(new Map())
+  store.set('foo/bar/baz', 1)
+  expect(store.get('foo/bar/baz')).toEqual([1])
+})
+
+test.skip('get nested property via path', () => {
+  const store = dyca(new Map())
+  store.set('foo', {
+    bar: {
+      baz: 1
+    }
+  })
+  expect(store.get('foo/bar/baz')).toBe(1)
+})

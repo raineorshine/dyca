@@ -1,49 +1,48 @@
 const uid = require('uuid').v4
+const _ = {
+  set: require('lodash.set')
+}
 
 const dyca = db => {
 
   const collections = {}
 
-  const store = {
+  const set = (path, value) => {
+    if (value === undefined) {
+      value = path
+      path = ''
+    }
 
-    set: (path, value) => {
-      if (value === undefined) {
-        value = path
-        path = ''
-      }
+    // set db
+    const id = uid()
+    db.set(id, value)
 
-      // set in db
-      const id = uid()
-      db.set(id, value)
+    // set collection
+    _.set(collections, `${path.replace(/\//g, '.')}.${id}`, true)
 
-      // index
-      if (!collections[path]) {
-        collections[path] = new Set()
-      }
-      collections[path].add(id)
-
-      return id
-    },
-
-    get: path => {
-      const parts = path.split('/')
-
-      if (collections[parts[0]]) {
-        return Array.from(collections[parts[0]].keys())
-          .map(key => db.get(key))
-      }
-
-      const collection = collections[parts[0]] || db
-      const value = parts.slice(1).reduce((accum, part) => accum[part], db.get(parts[0]))
-      return value
-    },
-
-    delete: key => db.delete(key),
-
-    index: key => {},
-
+    return id
   }
-  return store
+
+  const get = (collection, parts) => {
+
+    // return value for direct hit
+    const direct = db.get(parts[0])
+    if (direct) return direct
+
+    // otherwise dive into nested collection
+    const value = collection[parts[0]]
+    return parts.length > 1
+      ? get(value, parts.slice(1))
+      : Object.keys(value)
+        .map(key => db.get(key))
+  }
+
+  return {
+    set,
+    get: path => get(collections, path.split('/')),
+    delete: key => db.delete(key),
+    index: key => {},
+  }
 }
 
 module.exports = dyca
