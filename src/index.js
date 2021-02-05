@@ -7,7 +7,7 @@ const dyca = db => {
 
   const collections = {}
 
-  const set = (path, value) => {
+  const add = (path, value) => {
     if (value === undefined) {
       value = path
       path = ''
@@ -38,7 +38,7 @@ const dyca = db => {
   }
 
   return {
-    set,
+    add,
     get: path => get(collections, path.split('/')),
     delete: key => db.delete(key),
     index: key => {},
