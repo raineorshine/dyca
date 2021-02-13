@@ -13,7 +13,6 @@
   "main": "src",
   "scripts": {
     "lint": "eslint src --cache",
-    "postinstall": "husky install",
     "test": "jest"
   },
   "eslintConfig": {
